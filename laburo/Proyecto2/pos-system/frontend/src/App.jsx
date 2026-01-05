@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import api from './services/api'
 import './App.css'
+import { BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
 
 function App() {
   const [usuario, setUsuario] = useState(null)
@@ -19,6 +20,7 @@ function App() {
   const [mostrarFormulario, setMostrarFormulario] = useState(false)
   const [productoEditando, setProductoEditando] = useState(null)
   const [ticketVenta, setTicketVenta] = useState(null)
+  const [busqueda, setBusqueda] = useState('')
   const [nuevoProducto, setNuevoProducto] = useState({
     nombre: '', precio: '', stock: '', categoria: 'General'
   })
@@ -194,6 +196,28 @@ function App() {
 
   const formatearFecha = (fecha) => new Date(fecha).toLocaleString('es-AR')
 
+  const exportarCSV = () => {
+    const headers = ['ID', 'Fecha', 'Método Pago', 'Total']
+    const rows = ventas.map(v => [
+      v.id,
+      formatearFecha(v.fecha),
+      v.metodo_pago,
+      v.total
+    ])
+    
+    const csv = [headers, ...rows]
+      .map(row => row.join(','))
+      .join('\n')
+    
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `ventas_${new Date().toISOString().split('T')[0]}.csv`
+    a.click()
+    URL.revokeObjectURL(url)
+  }
+
   if (loading && usuario) return <div className="loading">Cargando...</div>
 
   if (!usuario) {
@@ -235,7 +259,6 @@ function App() {
 
       {mensaje && <div className="mensaje">{mensaje}</div>}
 
-      {/* MODAL EDITAR */}
       {productoEditando && (
         <div className="modal-overlay">
           <div className="modal">
@@ -253,7 +276,6 @@ function App() {
         </div>
       )}
 
-      {/* TICKET */}
       {ticketVenta && (
         <div className="modal-overlay">
           <div className="ticket">
@@ -278,12 +300,14 @@ function App() {
             </div>
             <p className="ticket-metodo">Pagó con: {ticketVenta.metodoPago}</p>
             <p className="ticket-gracias">¡Gracias por su compra!</p>
-            <button className="btn-cerrar-ticket" onClick={() => setTicketVenta(null)}>✓ Cerrar</button>
+            <div className="ticket-buttons">
+              <button className="btn-imprimir-ticket" onClick={() => window.print()}>🖨️ Imprimir</button>
+              <button className="btn-cerrar-ticket" onClick={() => setTicketVenta(null)}>✓ Cerrar</button>
+            </div>
           </div>
         </div>
       )}
 
-      {/* DASHBOARD */}
       {vista === 'dashboard' && estadisticas && (
         <div className="dashboard">
           <div className="stats-grid">
@@ -292,17 +316,53 @@ function App() {
             <div className="stat-card"><span className="stat-icon">📦</span><div className="stat-info"><h3>Productos</h3><p className="stat-value">{estadisticas.totalProductos}</p><span className="stat-sub">{estadisticas.productosBajoStock} bajo stock</span></div></div>
             <div className="stat-card"><span className="stat-icon">🏆</span><div className="stat-info"><h3>Total Histórico</h3><p className="stat-value">${estadisticas.ventasTotal.total.toLocaleString()}</p><span className="stat-sub">{estadisticas.ventasTotal.cantidad} ventas</span></div></div>
           </div>
+
+          <div className="charts-grid">
+            <div className="dashboard-card">
+              <h3>🏅 Productos Más Vendidos</h3>
+              {estadisticas.productosTop.length === 0 ? <p className="no-data">Sin datos</p> : (
+                <ResponsiveContainer width="100%" height={300}>
+                  <BarChart data={estadisticas.productosTop}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#333" />
+                    <XAxis dataKey="nombre" stroke="#888" />
+                    <YAxis stroke="#888" />
+                    <Tooltip contentStyle={{ background: '#1a1a2e', border: '1px solid #333', borderRadius: '8px' }} labelStyle={{ color: '#fff' }} />
+                    <Bar dataKey="vendidos" fill="#00d9ff" radius={[8, 8, 0, 0]} />
+                  </BarChart>
+                </ResponsiveContainer>
+              )}
+            </div>
+
+            <div className="dashboard-card">
+              <h3>💳 Ventas por Método de Pago</h3>
+              {estadisticas.ventasPorMetodo.length === 0 ? <p className="no-data">Sin datos</p> : (
+                <ResponsiveContainer width="100%" height={300}>
+                  <PieChart>
+                    <Pie data={estadisticas.ventasPorMetodo} dataKey="total" nameKey="metodo_pago" cx="50%" cy="50%" outerRadius={100} label={(entry) => `${entry.metodo_pago}: $${entry.total.toLocaleString()}`}>
+                      {estadisticas.ventasPorMetodo.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={['#00d9ff', '#00ff88', '#ff6b9d'][index % 3]} />
+                      ))}
+                    </Pie>
+                    <Tooltip contentStyle={{ background: '#1a1a2e', border: '1px solid #333', borderRadius: '8px' }} />
+                  </PieChart>
+                </ResponsiveContainer>
+              )}
+            </div>
+          </div>
+
           <div className="dashboard-grid">
-            <div className="dashboard-card"><h3>🏅 Más Vendidos</h3>{estadisticas.productosTop.length === 0 ? <p className="no-data">Sin datos</p> : <div className="top-list">{estadisticas.productosTop.map((p, i) => (<div key={i} className="top-item"><span className="top-rank">#{i + 1}</span><span className="top-name">{p.nombre}</span><span className="top-stats">{p.vendidos} uds</span></div>))}</div>}</div>
-            <div className="dashboard-card"><h3>💳 Por Método</h3>{estadisticas.ventasPorMetodo.length === 0 ? <p className="no-data">Sin datos</p> : <div className="metodos-list">{estadisticas.ventasPorMetodo.map((m, i) => (<div key={i} className="metodo-item"><span>{m.metodo_pago}</span><span className="metodo-total">${m.total.toLocaleString()}</span></div>))}</div>}</div>
+            <div className="dashboard-card"><h3>📋 Top 5 Productos</h3>{estadisticas.productosTop.length === 0 ? <p className="no-data">Sin datos</p> : <div className="top-list">{estadisticas.productosTop.map((p, i) => (<div key={i} className="top-item"><span className="top-rank">#{i + 1}</span><span className="top-name">{p.nombre}</span><span className="top-stats">{p.vendidos} uds</span></div>))}</div>}</div>
+            <div className="dashboard-card"><h3>💵 Resumen por Método</h3>{estadisticas.ventasPorMetodo.length === 0 ? <p className="no-data">Sin datos</p> : <div className="metodos-list">{estadisticas.ventasPorMetodo.map((m, i) => (<div key={i} className="metodo-item"><span>{m.metodo_pago === 'efectivo' ? '💵' : m.metodo_pago === 'tarjeta' ? '💳' : '📱'} {m.metodo_pago}</span><span>{m.cantidad} ventas</span><span className="metodo-total">${m.total.toLocaleString()}</span></div>))}</div>}</div>
           </div>
         </div>
       )}
 
-      {/* HISTORIAL */}
       {vista === 'historial' && (
         <section className="historial-panel">
-          <h2>📋 Historial de Ventas</h2>
+          <div className="historial-header">
+            <h2>📋 Historial de Ventas</h2>
+            <button className="btn-exportar" onClick={exportarCSV}>📥 Exportar CSV</button>
+          </div>
           <div className="ventas-lista">
             {ventas.map(venta => (
               <div key={venta.id} className="venta-card">
@@ -314,7 +374,6 @@ function App() {
         </section>
       )}
 
-      {/* POS */}
       {vista === 'pos' && (
         <div className="pos-container">
           <section className="productos-panel">
@@ -322,6 +381,12 @@ function App() {
               <h2>📦 Productos</h2>
               <button className="btn-agregar-producto" onClick={() => setMostrarFormulario(!mostrarFormulario)}>{mostrarFormulario ? '✕' : '+ Nuevo'}</button>
             </div>
+
+            <div className="buscador-container">
+              <input type="text" className="buscador-input" placeholder="🔍 Buscar producto..." value={busqueda} onChange={(e) => setBusqueda(e.target.value)} />
+              {busqueda && <button className="btn-limpiar-busqueda" onClick={() => setBusqueda('')}>✕</button>}
+            </div>
+
             {mostrarFormulario && (
               <form className="formulario-producto" onSubmit={agregarProducto}>
                 <input type="text" placeholder="Nombre" value={nuevoProducto.nombre} onChange={(e) => setNuevoProducto({...nuevoProducto, nombre: e.target.value})} />
@@ -332,8 +397,9 @@ function App() {
                 <button type="submit" className="btn-guardar">💾 Guardar</button>
               </form>
             )}
+
             <div className="productos-grid">
-              {productos.map(p => (
+              {productos.filter(p => p.nombre.toLowerCase().includes(busqueda.toLowerCase())).map(p => (
                 <div key={p.id} className={`producto-card ${p.stock === 0 ? 'sin-stock' : ''}`} onClick={() => p.stock > 0 && agregarAlCarrito(p)}>
                   <div className="producto-actions">
                     <button className="btn-editar" onClick={(e) => iniciarEdicion(p, e)}>✏️</button>
@@ -346,6 +412,7 @@ function App() {
               ))}
             </div>
           </section>
+
           <section className="carrito-panel">
             <h2>🧾 Carrito</h2>
             {carrito.length === 0 ? <p className="carrito-vacio">Agregá productos</p> : (

@@ -914,3 +914,260 @@ body {
     color: #00ff88;
     font-weight: bold;
 }
+
+
+/* Buscador */
+
+.buscador-container {
+    position: relative;
+    margin-bottom: 15px;
+}
+
+.buscador-input {
+    width: 100%;
+    padding: 12px 40px 12px 12px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.05);
+    color: #fff;
+    font-size: 1rem;
+    transition: all 0.3s;
+}
+
+.buscador-input:focus {
+    outline: none;
+    border-color: #00d9ff;
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.buscador-input::placeholder {
+    color: #666;
+}
+
+.btn-limpiar-busqueda {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 28px;
+    height: 28px;
+    border: none;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+}
+
+.btn-limpiar-busqueda:hover {
+    background: rgba(255, 68, 68, 0.3);
+}
+
+
+/* ============ RESPONSIVE ============ */
+
+
+/* Tablets y pantallas medianas */
+
+@media (max-width: 900px) {
+    .pos-container {
+        grid-template-columns: 1fr;
+    }
+    .carrito-panel {
+        position: sticky;
+        bottom: 0;
+        max-height: 400px;
+    }
+    .header {
+        flex-direction: column;
+        gap: 15px;
+        text-align: center;
+    }
+    .header-right {
+        width: 100%;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+    .productos-grid {
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    }
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    .dashboard-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+
+/* Móviles */
+
+@media (max-width: 600px) {
+    .app {
+        padding: 10px;
+    }
+    .header h1 {
+        font-size: 1.5rem;
+    }
+    .header p {
+        font-size: 0.9rem;
+    }
+    .btn-nav {
+        padding: 6px 10px;
+        font-size: 0.85rem;
+    }
+    .productos-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+    }
+    .producto-card {
+        padding: 12px;
+    }
+    .producto-card h3 {
+        font-size: 0.9rem;
+    }
+    .producto-card .precio {
+        font-size: 1.1rem;
+    }
+    .producto-card .stock {
+        font-size: 0.75rem;
+    }
+    .carrito-panel {
+        max-height: 350px;
+    }
+    .carrito-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+    .item-controles {
+        width: 100%;
+        justify-content: space-between;
+    }
+    .item-subtotal {
+        width: 100%;
+        text-align: right;
+    }
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+    .stat-card {
+        padding: 15px;
+    }
+    .stat-icon {
+        font-size: 2rem;
+    }
+    .formulario-producto {
+        padding: 15px;
+    }
+    .form-row-doble {
+        grid-template-columns: 1fr;
+    }
+    .modal {
+        width: 90%;
+        padding: 20px;
+    }
+    .ticket {
+        width: 90%;
+        padding: 20px;
+    }
+    .auth-card {
+        padding: 25px;
+    }
+    .ventas-lista {
+        gap: 10px;
+    }
+    .venta-card {
+        padding: 15px;
+    }
+    .venta-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 5px;
+    }
+    .historial-resumen {
+        flex-direction: column;
+        gap: 10px;
+    }
+    .panel-header {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .btn-agregar-producto {
+        width: 100%;
+    }
+}
+
+
+/* Móviles muy pequeños */
+
+@media (max-width: 400px) {
+    .productos-grid {
+        grid-template-columns: 1fr;
+    }
+    .header-right {
+        flex-direction: column;
+        width: 100%;
+    }
+    .btn-nav {
+        width: 100%;
+    }
+    .btn-logout {
+        width: 100%;
+    }
+}
+
+
+/* Charts */
+
+.charts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+@media (max-width: 600px) {
+    .charts-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+
+/* Historial header */
+
+.historial-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.btn-exportar {
+    padding: 10px 20px;
+    border: 1px solid #00d9ff;
+    border-radius: 8px;
+    background: rgba(0, 217, 255, 0.1);
+    color: #00d9ff;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.btn-exportar:hover {
+    background: #00d9ff;
+    color: #1a1a2e;
+}
+
+@media (max-width: 600px) {
+    .historial-header {
+        flex-direction: column;
+        gap: 10px;
+        align-items: stretch;
+    }
+    .btn-exportar {
+        width: 100%;
+    }
+}
