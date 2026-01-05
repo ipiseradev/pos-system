@@ -84,3 +84,117 @@
 ```bash
 git clone [https://github.com/ipiseradev/pos-system.git](https://github.com/ipiseradev/pos-system.git)
 cd pos-system
+
+2. Configurar el Backend
+
+cd backend
+# Instalar dependencias
+npm install
+# Iniciar servidor
+npm start
+
+3. Configurar el Frontend
+
+cd frontend
+# Instalar dependencias
+npm install
+# Iniciar aplicación
+npm run dev
+
+4. Acceder a la aplicación
+
+Frontend: http://localhost:5173
+Backend API: http://localhost:3000
+
+📂 Estructura del Proyecto
+
+pos-system/
+├── backend/
+│   ├── database/
+│   │   ├── db.js              # Configuración SQLite
+│   │   └── pos.db             # Base de datos
+│   ├── routes/
+│   │   ├── auth.js            # Autenticación
+│   │   ├── productos.js       # CRUD productos
+│   │   ├── ventas.js          # Gestión ventas
+│   │   └── estadisticas.js    # Estadísticas
+│   ├── server.js              # Servidor Express
+│   └── package.json
+│
+└── frontend/
+    ├── src/
+    │   ├── services/
+    │   │   └── api.js         # Cliente Axios
+    │   ├── App.jsx            # Componente principal
+    │   ├── App.css            # Estilos
+    │   └── main.jsx           # Entry point
+    ├── package.json
+    └── vite.config.js
+
+💡 Uso
+
+Primer Inicio
+
+Accede a http://localhost:5173
+Registra un nuevo usuario
+Inicia sesión con tus credenciales
+
+Gestión de Productos
+Agregar: Clic en "+ Nuevo"
+Editar: Clic en ✏️
+Eliminar: Clic en 🗑️
+Buscar: Usa el buscador en tiempo real
+
+Realizar Ventas
+Agrega productos al carrito
+Ajusta cantidades con +/-
+Selecciona método de pago
+Clic en "✅ Vender"
+Imprime o cierra el ticket
+Exportar Datos
+Ve a "Historial"
+Clic en "📥 Exportar CSV"
+Abre en Excel o Google Sheets
+🔒 Seguridad
+✅ Contraseñas hasheadas con bcrypt
+✅ Tokens JWT con expiración de 24h
+✅ Validación de datos en backend
+✅ Protección contra SQL injection
+
+🛠️ Scripts Disponibles
+
+Backend
+npm start # Inciar el Servidor 
+
+Frontend
+npm run dev        # Modo desarrollo
+npm run build      # Build producción
+npm run preview    # Preview build
+
+📈 Roadmap
+ Roles de usuario
+ Reportes PDF
+ Integración impresoras térmicas
+ Sistema de descuentos
+ Gestión de clientes
+ Multi-sucursal
+
+ 🤝 Contribuciones
+Las contribuciones son bienvenidas. Por favor:
+
+Fork el proyecto
+Crea tu rama (git checkout -b feature/NuevaCaracteristica)
+Commit tus cambios (git commit -m 'Agregar característica')
+Push a la rama (git push origin feature/NuevaCaracteristica)
+Abre un Pull Request
+
+📄 Licencia
+Este proyecto está bajo la Licencia MIT.
+
+
+👨‍💻 Autor
+Ignacio Pisera
+
+
+⭐ Si este proyecto te fue útil, dale una estrella!
+Hecho con ❤️ por Ignacio Pisera
